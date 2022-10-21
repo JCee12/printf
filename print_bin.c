@@ -1,38 +1,42 @@
 #include "main.h"
 
 /**
- * _bin - function to print binary
- * @bin: list being passed
- * Return: updated count return
+ * print_bnr - prints decimal in binary
+ * @arguments: input string
+ * @buf: buffer pointer
+ * @ibuf: index for buffer pointer
+ * Return: number of chars printed.
  */
-int _bin(va_list bin)
+int print_bnr(va_list arguments, char *buf, unsigned int ibuf)
 {
-	int count = 0, i;
-	int *arr;
-	unsigned int n = va_arg(bin, unsigned int);
-	unsigned int tmp = n;
+	int int_input, count, i, first_one, isnegative;
+	char *binary;
 
-	while (n / 2 != 0)
+	int_input = va_arg(arguments, int);
+	isnegative = 0;
+	if (int_input == 0)
 	{
-		n /= 2;
-		count++;
+		ibuf = handl_buf(buf, '0', ibuf);
+		return (1);
 	}
-	count++;
-	arr = malloc(count * sizeof(int));
-	if (arr == NULL)
+	if (int_input < 0)
 	{
-		free(arr);
-		return (0);
+		int_input = (int_input * -1) - 1;
+		isnegative = 1;
 	}
-	for (i = 0; i < count; i++)
+	binary = malloc(sizeof(char) * (32 + 1));
+	binary = fill_binary_array(binary, int_input, isnegative, 32);
+	first_one = 0;
+	for (count = i = 0; binary[i]; i++)
 	{
-		arr[i] = tmp % 2;
-		tmp /= 2;
+		if (first_one == 0 && binary[i] == '1')
+			first_one = 1;
+		if (first_one == 1)
+		{
+			ibuf = handl_buf(buf, binary[i], ibuf);
+			count++;
+		}
 	}
-	for (i = count - 1; i >= 0; i--)
-	{
-		_putchar(arr[i] + '0');
-	}
-	free(arr);
+	free(binary);
 	return (count);
 }
