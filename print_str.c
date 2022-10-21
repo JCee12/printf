@@ -1,22 +1,27 @@
 #include "main.h"
 
 /**
- * str - prints string to stdout
- * @string: list
- * Return: number of char
+ * print_str - writes the string to stdout
+ * @arguments: input string
+ * @buf: buffer pointer
+ * @ibuf: index for buffer pointer
+ * Return: On success 1.
  */
-int str(va_list string)
+int print_str(va_list arguments, char *buf, unsigned int ibuf)
 {
-	int len;
 	char *str;
+	unsigned int i;
+	char nill[] = "(null)";
 
-	str = va_arg(string, char *);
-
+	str = va_arg(arguments, char *);
 	if (str == NULL)
-		str = "(null)";
-	len = 0;
-
-	while (str[len] != '\0')
-		len = len + _putchar(str[len]);
-	return (len);
+	{
+		for (i = 0; nill[i]; i++)
+			ibuf = handl_buf(buf, nill[i], ibuf);
+		return (6);
+	}
+	for (i = 0; str[i]; i++)
+		ibuf = handl_buf(buf, str[i], ibuf);
+	return (i);
 }
+
