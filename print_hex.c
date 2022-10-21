@@ -1,51 +1,44 @@
 #include "main.h"
 
 /**
- * _hex_str - converts the number from base 10 to hex
- * @n: number to be converted
- * @hex: base of 16 being passed
- * @alpha: Char 'A' to 'F' or 'a' to 'f'
+ * print_hex - prints a decimal in hexadecimal
+ * @arguments: input string
+ * @buf: buffer pointer
+ * @ibuf: index for buffer pointer
  * Return: number of chars printed
  */
-int _hex_str(unsigned int n, unsigned int hex, char alpha)
+int print_hex(va_list arguments, char *buf, unsigned int ibuf)
 {
-	unsigned int a = n % hex;
-	unsigned int b = n / hex;
-	char c;
+	int int_input, i, isnegative, count, first_digit;
+	char *hexadecimal, *binary;
 
-	if (a > 10)
-		c = (a - 10) + alpha;
-	else
-		c = a + '0';
-	if (b == 0)
+	int_input = va_arg(arguments, int);
+	isnegative = 0;
+	if (int_input == 0)
 	{
-		return (_putchar(c));
+		ibuf = handl_buf(buf, '0', ibuf);
+		return (1);
 	}
-	if (b < hex)
+	if (int_input < 0)
 	{
-		if (b > 10)
-			return (_putchar(b - 10 + alpha) + _putchar(c));
-		return (_putchar(b + '0') + _putchar(c));
+		int_input = (int_input * -1) - 1;
+		isnegative = 1;
 	}
-	return (_hex_str(b, hex, alpha) + _putchar(c));
-}
-
-/**
- * _hex_l - printing lower case hexa
- * @hexa: argument recieved
- * Return: no of char printed
- */
-int _hex_l(va_list hexa)
-{
-	return (_hex_str(va_arg(hexa, unsigned int), 16, 'a'));
-}
-
-/**
- * _hex_u - printing upper case hexa
- * @hexa: argument recieved
- * Return: no. of char printed
- */
-int _hex_u(va_list hexa)
-{
-	return (_hex_str(va_arg(hexa, unsigned int), 16, 'A'));
+	binary = malloc(sizeof(char) * (32 + 1));
+	binary = fill_binary_array(binary, int_input, isnegative, 32);
+	hexadecimal = malloc(sizeof(char) * (8 + 1));
+	hexadecimal = fill_hex_array(binary, hexadecimal, 0, 8);
+	for (first_digit = i = count = 0; hexadecimal[i]; i++)
+	{
+		if (hexadecimal[i] != '0' && first_digit == 0)
+			first_digit = 1;
+		if (first_digit)
+		{
+			ibuf = handl_buf(buf, hexadecimal[i], ibuf);
+			count++;
+		}
+	}
+	free(binary);
+	free(hexadecimal);
+	return (count);
 }
