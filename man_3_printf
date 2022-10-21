@@ -1,4 +1,4 @@
-.TH _PRINTF  "21 October 2022" "1" "_printf Manual"
+.TH _PRINTF 3 "21 October 2022" "1" "_printf Manual"
 .SH NAME
 _printf()
 
