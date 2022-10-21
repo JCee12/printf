@@ -1,82 +1,78 @@
+#include <stdarg.h>
+#include <unistd.h>
 #include "main.h"
-#include <stdlib.h>
-
 /**
- * check_for_specifiers - checks if there is a valid format specifier
- * @format: possible format specifier
- *
- * Return: pointer to valid function or NULL
- */
-static int (*check_for_specifiers(const char *format))(va_list)
+  * find_function - function that finds formats for _printf
+  * calls the corresponding function.
+  * @format: format (char, string, int, decimal)
+  * Return: NULL or function associated ;
+  */
+int (*find_function(const char *format))(va_list)
 {
-	unsigned int i;
-	print_t p[] = {
-		{"c", print_c},
-		{"s", print_s},
-		{"i", print_i},
-		{"d", print_d},
-		{"u", print_u},
-		{"b", print_b},
-		{"o", print_o},
+	unsigned int i = 0;
+	code_f find_f[] = {
+		{"c", print_char},
+		{"s", print_string},
+		{"i", print_int},
+		{"d", print_dec},
+		{"r", print_rev},
+		{"b", print_bin},
+		{"u", print_unsig},
+		{"o", print_octal},
 		{"x", print_x},
 		{"X", print_X},
-		{"p", print_p},
-		{"S", print_S},
-		{"r", print_r},
-		{"R", print_R},
+		{"R", print_rot13},
 		{NULL, NULL}
 	};
 
-	for (i = 0; p[i].t != NULL; i++)
+	while (find_f[i].sc)
 	{
-		if (*(p[i].t) == *format)
-		{
-			break;
-		}
+		if (find_f[i].sc[0] == (*format))
+			return (find_f[i].f);
+		i++;
 	}
-	return (p[i].f);
+	return (NULL);
 }
-
 /**
- * _printf - prints anything
- * @format: list of argument types passed to the function
- *
- * Return: number of characters printed
- */
+  * _printf - function that produces output according to a format.
+  * @format: format (char, string, int, decimal)
+  * Return: size the output text;
+  */
 int _printf(const char *format, ...)
 {
-	unsigned int i = 0, count = 0;
-	va_list valist;
+	va_list ap;
 	int (*f)(va_list);
+	unsigned int i = 0, cprint = 0;
 
 	if (format == NULL)
 		return (-1);
-	va_start(valist, format);
+	va_start(ap, format);
 	while (format[i])
 	{
-		for (; format[i] != '%' && format[i]; i++)
+		while (format[i] != '%' && format[i])
 		{
 			_putchar(format[i]);
-			count++;
+			cprint++;
+			i++;
 		}
-		if (!format[i])
-			return (count);
-		f = check_for_specifiers(&format[i + 1]);
+		if (format[i] == '\0')
+			return (cprint);
+		f = find_function(&format[i + 1]);
 		if (f != NULL)
 		{
-			count += f(valist);
+			cprint += f(ap);
 			i += 2;
 			continue;
 		}
 		if (!format[i + 1])
 			return (-1);
 		_putchar(format[i]);
-		count++;
+		cprint++;
 		if (format[i + 1] == '%')
 			i += 2;
 		else
 			i++;
 	}
-	va_end(valist);
-	return (count);
+	va_end(ap);
+	return (cprint);
 }
