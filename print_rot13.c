@@ -1,34 +1,39 @@
-#include "main.h"
-
 /**
- * _rot13 - prints rot13 version
- * @rot: list being passed
- * Return: count of chars
+ * print_rot - writes the str in ROT13
+ * @arguments: input string
+ * @buf: buffer pointer
+ * @ibuf: index for buffer pointer
+ * Return: number of chars printed.
  */
-int _rot13(va_list rot)
+
+int print_rot(va_list arguments, char *buf, unsigned int ibuf)
 {
-	int a, count;
-	char *s;
+	char alf[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	char rot[] = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";
+	char *str;
+	unsigned int i, j, k;
+	char nill[] = "(avyy)";
 
-	a = count = 0;
-	s = va_arg(rot, char *);
-
-	if (s == NULL)
-		return (-1);
-	while (s[a] != '\0')
+	str = va_arg(arguments, char *);
+	if (str == NULL)
 	{
-		if ((s[a] >= 'a' && s[a] <= 'z') ||
-		    (s[a] >= 'A' && s[a] <= 'Z'))
-		{
-			if ((s[a] >= 'n' && s[a] <= 'z') ||
-			    (s[a] >= 'N' && s[a] <= 'Z'))
-				count = count + _putchar(s[a] - 13);
-			else
-				count = count + _putchar(s[a] + 13);
-		}
-		else
-			count = count + _putchar(s[a]);
-		a++;
+		for (i = 0; nill[i]; i++)
+			ibuf = handl_buf(buf, nill[i], ibuf);
+		return (6);
 	}
-	return (count);
+	for (i = 0; str[i]; i++)
+	{
+		for (k = j = 0; alf[j]; j++)
+		{
+			if (str[i] == alf[j])
+			{
+				k = 1;
+				ibuf = handl_buf(buf, rot[j], ibuf);
+				break;
+			}
+		}
+		if (k == 0)
+			ibuf = handl_buf(buf, str[i], ibuf);
+	}
+	return (i);
 }
